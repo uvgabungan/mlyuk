@@ -1,0 +1,39 @@
+{
+  "header": {
+    "enabled": true,
+    "type": "banner",
+    "link": "https://link-iklan-anda.com",
+    "image": "",
+    "customHtml": ""
+  },
+  "underPlayer": {
+    "enabled": true,
+    "type": "banner",
+    "link": "https://link-iklan-anda.com",
+    "image": "",
+    "customHtml": ""
+  },
+  "footer": {
+    "enabled": true,
+    "type": "banner",
+    "link": "https://link-iklan-anda.com",
+    "image": "",
+    "customHtml": ""
+  },
+  "floating": {
+    "enabled": true,
+    "text": "Pasang Link Promosi / Iklan Melayang Anda di Sini! Klik Untuk Membuka",
+    "link": "https://link-iklan-anda.com"
+  },
+  "popunder": {
+    "enabled": false,
+    "link1": "",
+    "link2": "",
+    "link3": "",
+    "mode": "random"
+  },
+  "histats": {
+    "enabled": true,
+    "code": ""
+  }
+}

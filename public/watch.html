@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nonton Video Streaming - MLyuk</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="bg-[#090a0f] text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Header / Navigation Bar -->
+  <header class="sticky top-0 z-40 nav-glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-4">
+        
+        <!-- Logo -->
+        <a href="/" class="flex items-center shrink-0 group select-none">
+          <span class="font-black text-2xl tracking-tighter text-white flex items-center">
+            ML<span class="bg-[#ffa31a] text-black font-black text-lg px-2 py-0.5 rounded-lg ml-0.5 leading-none shadow-md">yuk</span>
+          </span>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-lg mx-2 sm:mx-6">
+          <form action="/" method="GET" class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 text-sm">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input 
+              type="text" 
+              name="q"
+              placeholder="Cari video lain..."
+              class="w-full pl-10 pr-4 py-2 bg-zinc-900/90 border border-zinc-800 rounded-full text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition"
+            />
+          </form>
+        </div>
+
+        <!-- Back to Home / Random / Indexing -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button 
+            type="button" 
+            onclick="playRandomVideo()"
+            class="px-3 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-xs font-medium text-zinc-300 hover:text-white transition flex items-center gap-1.5"
+            title="Tonton Video Acak"
+          >
+            <i class="fa-solid fa-shuffle text-rose-500"></i>
+            <span class="hidden sm:inline">Acak</span>
+          </button>
+          <a 
+            href="/" 
+            class="px-3 py-1.5 rounded-lg bg-zinc-800/90 hover:bg-zinc-700 text-xs font-semibold text-white transition flex items-center gap-1.5"
+          >
+            <i class="fa-solid fa-house"></i>
+            <span class="hidden sm:inline">Beranda</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ================= [SLOT IKLAN HEADER START] ================= -->
+    <!-- Tempelkan script / banner link iklan header di bawah ini -->
+    <div id="ad-watch-header" class="w-full flex flex-col items-center justify-center mb-6">
+      <div class="w-full max-w-4xl min-h-[90px] bg-zinc-900/60 border border-dashed border-zinc-700/80 rounded-xl flex items-center justify-center p-2 relative overflow-hidden group">
+        <a href="https://link-iklan-anda.com" target="_blank" rel="noopener noreferrer" class="block max-w-full text-center">
+          <div class="text-[11px] text-zinc-500 uppercase tracking-widest font-mono mb-1">Sponsor / Iklan Header (728x90)</div>
+          <div class="px-6 py-2.5 bg-gradient-to-r from-amber-500/20 via-rose-500/20 to-violet-500/20 rounded-lg text-xs font-semibold text-zinc-300 group-hover:text-white transition">
+            <i class="fa-solid fa-bullhorn text-rose-400 mr-2"></i> Pasang Banner Iklan Header di Sini
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- ================= [SLOT IKLAN HEADER END] ================= -->
+
+    <!-- Loading State -->
+    <div id="loadingState" class="flex flex-col items-center justify-center py-20 space-y-4">
+      <div class="w-12 h-12 border-4 border-rose-600/30 border-t-rose-600 rounded-full animate-spin"></div>
+      <p class="text-zinc-400 text-sm">Memuat pemutar video...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden text-center py-20 space-y-4">
+      <i class="fa-solid fa-circle-exclamation text-5xl text-rose-500"></i>
+      <h2 class="text-xl font-bold text-white">Video Tidak Ditemukan</h2>
+      <p class="text-zinc-400 text-sm">Video dengan ID ini mungkin tidak ada atau telah dihapus.</p>
+      <a href="/" class="inline-block mt-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs transition">
+        Kembali ke Beranda
+      </a>
+    </div>
+
+    <!-- Video Player Content -->
+    <div id="playerSection" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Left Column: Video Player & Details (2 Cols on lg) -->
+      <div class="lg:col-span-2 space-y-5">
+        
+        <!-- Breadcrumb & Badge -->
+        <div class="flex items-center gap-2 text-xs text-zinc-400">
+          <a href="/" class="hover:text-white transition">Beranda</a>
+          <span>/</span>
+          <span class="text-zinc-500">Video</span>
+          <span>/</span>
+          <span id="videoBadgeId" class="text-rose-400 font-semibold">#</span>
+        </div>
+
+        <!-- Video Title -->
+        <h1 id="videoTitle" class="text-lg sm:text-xl md:text-2xl font-bold text-white leading-snug">
+          ...
+        </h1>
+
+        <!-- Video Player Wrapper -->
+        <div class="relative bg-black rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
+          <div class="player-container">
+            <iframe 
+              id="videoIframe" 
+              src="" 
+              allowfullscreen="true" 
+              webkitallowfullscreen="true" 
+              mozallowfullscreen="true" 
+              scrolling="no" 
+              frameborder="0"
+              referrerpolicy="no-referrer"
+              allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+            ></iframe>
+          </div>
+        </div>
+
+        <!-- Player Toolbar / Controls -->
+        <div class="bg-zinc-900/80 border border-zinc-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+          
+          <!-- Left Actions -->
+          <div class="flex items-center flex-wrap gap-2">
+            <!-- Bookmark Button -->
+            <button 
+              type="button" 
+              id="bookmarkBtn" 
+              class="px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 font-medium"
+              onclick="toggleBookmark()"
+            >
+              <i class="fa-regular fa-bookmark"></i>
+              <span>Simpan</span>
+            </button>
+
+            <!-- Reload Player -->
+            <button 
+              type="button" 
+              onclick="reloadPlayer()"
+              class="px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white transition flex items-center gap-1.5"
+              title="Muat Ulang Pemutar"
+            >
+              <i class="fa-solid fa-rotate-right"></i>
+              <span class="hidden sm:inline">Refresh</span>
+            </button>
+          </div>
+
+          <!-- Right Actions -->
+          <div class="flex items-center flex-wrap gap-2">
+            <!-- Share / Copy Link -->
+            <button 
+              type="button" 
+              onclick="copyShareLink()"
+              class="px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white transition flex items-center gap-1.5"
+              title="Salin Link Video"
+            >
+              <i class="fa-solid fa-share-nodes"></i>
+              <span>Bagikan</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Video Information Card -->
+        <div class="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-5 space-y-3 text-sm">
+          <h3 class="font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-rose-500"></i> Informasi Video
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400">
+            <div><span class="text-zinc-500">Host Player:</span> <span id="playerHost" class="text-zinc-300 font-mono">-</span></div>
+            <div><span class="text-zinc-500">Kualitas:</span> <span class="text-emerald-400 font-semibold">HD / 720p - 1080p</span></div>
+          </div>
+          <p class="text-xs text-zinc-500 leading-relaxed">
+            Tips: Jika pemutar video mengalami kendala koneksi atau lambat, klik tombol <strong>"Refresh"</strong> untuk memuat ulang video.
+          </p>
+        </div>
+
+        <!-- Navigation Next / Prev Buttons -->
+        <div class="flex items-center justify-between pt-2">
+          <button 
+            type="button" 
+            id="prevVideoBtn"
+            class="px-4 py-2 rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-xs font-semibold text-zinc-300 hover:text-white transition flex items-center gap-2"
+          >
+            <i class="fa-solid fa-arrow-left"></i> Video Sebelumnya
+          </button>
+          <button 
+            type="button" 
+            onclick="playRandomVideo()"
+            class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white transition flex items-center gap-2"
+          >
+            <i class="fa-solid fa-shuffle text-rose-400"></i> Acak Lainnya
+          </button>
+          <button 
+            type="button" 
+            id="nextVideoBtn"
+            class="px-4 py-2 rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-xs font-semibold text-zinc-300 hover:text-white transition flex items-center gap-2"
+          >
+            Video Selanjutnya <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <!-- ================= [SLOT IKLAN BAWAH PEMUTAR VIDEO START] ================= -->
+        <!-- Tempelkan script / banner link iklan di bawah player video -->
+        <div id="ad-under-player" class="w-full my-4">
+          <div class="w-full min-h-[90px] bg-zinc-900/60 border border-dashed border-zinc-700/80 rounded-xl flex items-center justify-center p-2 relative overflow-hidden group">
+            <a href="https://link-iklan-anda.com" target="_blank" rel="noopener noreferrer" class="block max-w-full text-center">
+              <div class="text-[11px] text-zinc-500 uppercase tracking-widest font-mono mb-1">Sponsor / Iklan Bawah Player (Responsif)</div>
+              <div class="px-5 py-2.5 bg-gradient-to-r from-emerald-500/20 via-sky-500/20 to-rose-500/20 rounded-lg text-xs font-semibold text-zinc-300 group-hover:text-white transition">
+                <i class="fa-solid fa-play-circle text-emerald-400 mr-2"></i> Pasang Banner Iklan Bawah Pemutar di Sini
+              </div>
+            </a>
+          </div>
+        </div>
+        <!-- ================= [SLOT IKLAN BAWAH PEMUTAR VIDEO END] ================= -->
+
+      </div>
+
+      <!-- Right Column: Related Videos / Rekomendasi (1 Col on lg) -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-fire text-rose-500"></i> Video Terkait
+          </h2>
+          <span class="text-xs text-zinc-500">Rekomendasi</span>
+        </div>
+
+        <div id="relatedVideosList" class="space-y-3">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= [SLOT IKLAN FOOTER START] ================= -->
+    <!-- Tempelkan script / banner link iklan footer di bawah ini -->
+    <div id="ad-watch-footer" class="w-full flex flex-col items-center justify-center my-6">
+      <div class="w-full max-w-4xl min-h-[90px] bg-zinc-900/60 border border-dashed border-zinc-700/80 rounded-xl flex items-center justify-center p-2 relative overflow-hidden group">
+        <a href="https://link-iklan-anda.com" target="_blank" rel="noopener noreferrer" class="block max-w-full text-center">
+          <div class="text-[11px] text-zinc-500 uppercase tracking-widest font-mono mb-1">Sponsor / Iklan Footer (728x90)</div>
+          <div class="px-6 py-2.5 bg-gradient-to-r from-violet-500/20 via-rose-500/20 to-amber-500/20 rounded-lg text-xs font-semibold text-zinc-300 group-hover:text-white transition">
+            <i class="fa-solid fa-gift text-violet-400 mr-2"></i> Pasang Banner Iklan Footer di Sini
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- ================= [SLOT IKLAN FOOTER END] ================= -->
+
+  </main>
+
+  <!-- ================= [SLOT IKLAN MELAYANG BAWAH (STICKY BOTTOM)] ================= -->
+  <div id="floating-sticky-watch-ad" class="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 border-t border-zinc-800 p-2 shadow-2xl backdrop-blur-md flex items-center justify-center">
+    <div class="max-w-4xl w-full flex items-center justify-between gap-4 px-3">
+      <a href="https://link-iklan-anda.com" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-2 text-xs font-bold text-amber-400 hover:text-white transition truncate">
+        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-mono shrink-0">IKLAN</span>
+        <span class="truncate">Pasang Link Promosi / Iklan Melayang Anda di Sini! Klik Untuk Membuka</span>
+      </a>
+      <button 
+        type="button" 
+        onclick="document.getElementById('floating-sticky-watch-ad').style.display='none'" 
+        class="text-zinc-500 hover:text-white p-1 text-xs shrink-0" 
+        title="Tutup Iklan"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+  <!-- ================= [SLOT IKLAN MELAYANG BAWAH END] ================= -->
+
+  <!-- Footer -->
+  <footer class="border-t border-zinc-800/80 bg-zinc-950/80 text-zinc-500 py-6 mt-12 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-2 select-none">
+        <span class="font-black text-sm text-white flex items-center">
+          ML<span class="bg-[#ffa31a] text-black font-black text-[10px] px-1.5 py-0.5 rounded ml-0.5 leading-none">yuk</span>
+        </span>
+        <span>• Database lokal dengan 19,200 video</span>
+      </div>
+      <a href="/" class="text-amber-400 hover:underline font-medium">Kembali ke Katalog</a>
+    </div>
+  </footer>
+
+  <!-- Watch Page Script -->
+  <script>
+    let currentVideo = null;
+
+    // Block automatic popup popunders on the main window during watch sessions
+    const originalWindowOpen = window.open;
+    window.open = function(url, target, features) {
+      console.log('[Anti-Popup] Blocked popup window.open attempt:', url);
+      return null;
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Check if video was pre-injected by SSR
+      if (window.__INITIAL_VIDEO__ && window.__INITIAL_VIDEO__.id) {
+        populateVideo(window.__INITIAL_VIDEO__);
+        return;
+      }
+
+      // 2. Otherwise extract from URL params or pathname
+      const urlParams = new URLSearchParams(window.location.search);
+      let videoIdOrSlug = urlParams.get('id') || urlParams.get('slug');
+
+      if (!videoIdOrSlug && window.location.pathname.startsWith('/watch/')) {
+        videoIdOrSlug = window.location.pathname.replace('/watch/', '').replace(/\/$/, '');
+      }
+
+      if (!videoIdOrSlug) {
+        showError();
+        return;
+      }
+
+      loadVideoData(videoIdOrSlug);
+    });
+
+    function populateVideo(video) {
+      currentVideo = video;
+      document.title = `${video.title} - MLyuk`;
+
+      // Update UI elements
+      document.getElementById('videoBadgeId').textContent = `#${video.id}`;
+      document.getElementById('videoTitle').textContent = video.title;
+      document.getElementById('videoIframe').src = video.iframe_url;
+
+      try {
+        const host = new URL(video.iframe_url).hostname;
+        document.getElementById('playerHost').textContent = host;
+      } catch {
+        document.getElementById('playerHost').textContent = video.iframe_url;
+      }
+
+      // Prev & Next navigation
+      const prevId = Number(video.id) > 1 ? Number(video.id) - 1 : 1;
+      const nextId = Number(video.id) + 1;
+      document.getElementById('prevVideoBtn').onclick = () => window.location.href = `/watch/${prevId}`;
+      document.getElementById('nextVideoBtn').onclick = () => window.location.href = `/watch/${nextId}`;
+
+      saveToHistory(video);
+      updateBookmarkUI();
+
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('playerSection').classList.remove('hidden');
+
+      loadRelatedVideos(video.id || video.slug);
+    }
+
+    async function loadVideoData(idOrSlug) {
+      try {
+        const res = await fetch(`/api/videos/${encodeURIComponent(idOrSlug)}`);
+        if (!res.ok) {
+          showError();
+          return;
+        }
+
+        const video = await res.json();
+        populateVideo(video);
+      } catch (err) {
+        console.error('Error fetching video:', err);
+        showError();
+      }
+    }
+
+    async function loadRelatedVideos(idOrSlug) {
+      const container = document.getElementById('relatedVideosList');
+      try {
+        const res = await fetch(`/api/related/${encodeURIComponent(idOrSlug)}?limit=8`);
+        const related = await res.json();
+
+        if (!related || related.length === 0) {
+          container.innerHTML = `<p class="text-xs text-zinc-500">Tidak ada rekomendasi tambahan.</p>`;
+          return;
+        }
+
+        container.innerHTML = related.map(v => `
+          <a href="/watch/${v.slug || v.id}" class="group flex gap-3 p-2 rounded-xl border border-zinc-800/80 bg-zinc-900/60 hover:bg-zinc-800/80 transition">
+            <div class="w-28 shrink-0 aspect-video rounded-lg overflow-hidden bg-zinc-800 relative">
+              <img 
+                src="${v.image_url || '/placeholder.svg'}" 
+                alt="${escapeHtml(v.title)}" 
+                loading="lazy" 
+                referrerpolicy="no-referrer"
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                onerror="this.onerror=null;this.src='/placeholder.svg';"
+              />
+              <div class="absolute inset-0 bg-black/30 group-hover:bg-transparent transition flex items-center justify-center">
+                <i class="fa-solid fa-play text-white text-xs opacity-0 group-hover:opacity-100 transition"></i>
+              </div>
+            </div>
+            <div class="flex flex-col justify-between overflow-hidden">
+              <h4 class="text-xs font-semibold text-zinc-200 group-hover:text-rose-400 line-clamp-2 leading-snug transition">
+                ${escapeHtml(v.title)}
+              </h4>
+              <span class="text-[10px] text-zinc-500 font-mono mt-1">#${v.id}</span>
+            </div>
+          </a>
+        `).join('');
+      } catch (err) {
+        console.error('Error loading related videos:', err);
+      }
+    }
+
+    function reloadPlayer() {
+      const iframe = document.getElementById('videoIframe');
+      if (iframe && currentVideo) {
+        const currentSrc = currentVideo.iframe_url;
+        iframe.src = '';
+        setTimeout(() => {
+          iframe.src = currentSrc;
+          showToast('Player dimuat ulang');
+        }, 100);
+      }
+    }
+
+    function toggleBookmark() {
+      if (!currentVideo) return;
+      const key = 'stream_bookmarks';
+      let bookmarks = [];
+      try {
+        bookmarks = JSON.parse(localStorage.getItem(key) || '[]');
+      } catch {}
+
+      const idx = bookmarks.findIndex(v => v.id === currentVideo.id);
+      if (idx >= 0) {
+        bookmarks.splice(idx, 1);
+        localStorage.setItem(key, JSON.stringify(bookmarks));
+        showToast('Dihapus dari Favorit');
+      } else {
+        bookmarks.unshift(currentVideo);
+        localStorage.setItem(key, JSON.stringify(bookmarks));
+        showToast('Ditambahkan ke Favorit');
+      }
+      updateBookmarkUI();
+    }
+
+    function updateBookmarkUI() {
+      if (!currentVideo) return;
+      const key = 'stream_bookmarks';
+      let bookmarks = [];
+      try {
+        bookmarks = JSON.parse(localStorage.getItem(key) || '[]');
+      } catch {}
+
+      const isBookmarked = bookmarks.some(v => v.id === currentVideo.id);
+      const btn = document.getElementById('bookmarkBtn');
+      if (btn) {
+        if (isBookmarked) {
+          btn.classList.add('text-rose-500', 'border-rose-500/40');
+          btn.innerHTML = `<i class="fa-solid fa-bookmark"></i> <span>Tersimpan</span>`;
+        } else {
+          btn.classList.remove('text-rose-500', 'border-rose-500/40');
+          btn.innerHTML = `<i class="fa-regular fa-bookmark"></i> <span>Simpan</span>`;
+        }
+      }
+    }
+
+    function saveToHistory(video) {
+      const key = 'stream_history';
+      let history = [];
+      try {
+        history = JSON.parse(localStorage.getItem(key) || '[]');
+      } catch {}
+
+      history = history.filter(v => v.id !== video.id);
+      history.unshift({ ...video, watchedAt: Date.now() });
+      if (history.length > 50) history = history.slice(0, 50);
+      localStorage.setItem(key, JSON.stringify(history));
+    }
+
+    function copyShareLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast('Link video disalin ke clipboard');
+      }).catch(() => {
+        showToast('Gagal menyalin link');
+      });
+    }
+
+    function playRandomVideo() {
+      fetch('/api/random')
+        .then(res => res.json())
+        .then(video => {
+          if (video && video.id) {
+            window.location.href = `/watch?id=${video.id}`;
+          }
+        });
+    }
+
+    function showError() {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('errorState').classList.remove('hidden');
+    }
+
+    function showToast(message) {
+      let toast = document.getElementById('toastNotification');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toastNotification';
+        toast.className = 'fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl bg-zinc-900/95 border border-zinc-700/80 text-white text-xs font-semibold shadow-2xl backdrop-blur-md flex items-center gap-2 transform translate-y-10 opacity-0 transition duration-300';
+        document.body.appendChild(toast);
+      }
+
+      toast.innerHTML = `<i class="fa-solid fa-circle-check text-rose-500 text-sm"></i> <span>${message}</span>`;
+      toast.classList.remove('translate-y-10', 'opacity-0');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+      }, 2400);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+  <!-- Dynamic Ads Script -->
+  <script src="/ads.js"></script>
+</body>
+</html>

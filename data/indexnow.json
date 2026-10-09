@@ -1,0 +1,34 @@
+{
+  "key": "streamhubindexnow2026auto789",
+  "bing": {
+    "enabled": true
+  },
+  "yandex": {
+    "enabled": true
+  },
+  "indexnowOrg": {
+    "enabled": true
+  },
+  "autoSubmitOnNewVideo": true,
+  "lastSubmission": {
+    "timestamp": "2026-10-09T08:08:23.685Z",
+    "submittedCount": 5,
+    "results": {
+      "indexnowOrg": {
+        "status": 429,
+        "statusText": "Too Many Requests",
+        "success": false
+      },
+      "bing": {
+        "status": 429,
+        "statusText": "Too Many Requests",
+        "success": false
+      },
+      "yandex": {
+        "status": 422,
+        "statusText": "Unprocessable Entity",
+        "success": false
+      }
+    }
+  }
+}

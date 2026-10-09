@@ -1,0 +1,25 @@
+{
+  "name": "streaming-web",
+  "version": "1.0.0",
+  "description": "High performance video streaming web portal with 19,200+ videos, SEO and Auto Indexing for Google, Bing, Yandex",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20.x"
+  },
+  "keywords": [
+    "streaming",
+    "video",
+    "indexnow",
+    "seo",
+    "auto-indexing",
+    "google",
+    "bing",
+    "yandex"
+  ],
+  "author": "Ghufron",
+  "license": "ISC"
+}

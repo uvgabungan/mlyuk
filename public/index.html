@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLyuk - Nonton Video Streaming HD</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="bg-[#090a0f] text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Header / Navigation Bar -->
+  <header class="sticky top-0 z-40 nav-glass">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-4">
+        
+        <!-- Logo -->
+        <a href="/" class="flex items-center shrink-0 group select-none">
+          <span class="font-black text-2xl tracking-tighter text-white flex items-center">
+            ML<span class="bg-[#ffa31a] text-black font-black text-lg px-2 py-0.5 rounded-lg ml-0.5 leading-none shadow-md">yuk</span>
+          </span>
+        </a>
+
+        <!-- Global Search Bar -->
+        <div class="flex-1 max-w-xl mx-2 sm:mx-6">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-400 text-sm">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input 
+              type="text" 
+              id="searchInput"
+              placeholder="Cari dari 19,000+ video... (Tekan '/' untuk fokus)"
+              class="w-full pl-10 pr-10 py-2 bg-zinc-900/90 border border-zinc-800 rounded-full text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition shadow-inner"
+            />
+            <button 
+              type="button" 
+              id="clearSearchBtn"
+              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-zinc-500 hover:text-zinc-300 hidden"
+              onclick="selectTag('Semua')"
+            >
+              <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Navigation Links -->
+        <div class="flex items-center gap-2 shrink-0">
+
+          <!-- Random Video Button -->
+          <a 
+            href="javascript:void(0)" 
+            onclick="fetch('/api/random').then(r=>r.json()).then(v=>{if(v.id)window.location.href='/watch/'+(v.slug||v.id)})" 
+            class="px-3 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-xs font-medium text-zinc-300 hover:text-white transition flex items-center gap-1.5"
+            title="Tonton Video Acak"
+          >
+            <i class="fa-solid fa-shuffle text-rose-500"></i>
+            <span class="hidden sm:inline">Acak</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Secondary Subnav / View Tabs -->
+      <div class="flex items-center justify-between border-t border-zinc-800/60 pt-2 pb-2.5 text-xs font-semibold overflow-x-auto no-scrollbar gap-4">
+        <div class="flex items-center gap-6">
+          <button 
+            type="button" 
+            class="nav-tab text-rose-500 border-b-2 border-rose-500 pb-1 flex items-center gap-1.5 transition"
+            data-view="feed"
+            onclick="setView('feed')"
+          >
+            <i class="fa-solid fa-compass"></i> Beranda
+          </button>
+          <button 
+            type="button" 
+            class="nav-tab text-zinc-400 border-b-2 border-transparent pb-1 hover:text-zinc-200 flex items-center gap-1.5 transition"
+            data-view="bookmarks"
+            onclick="setView('bookmarks')"
+          >
+            <i class="fa-solid fa-bookmark"></i> Favorit
+          </button>
+          <button 
+            type="button" 
+            class="nav-tab text-zinc-400 border-b-2 border-transparent pb-1 hover:text-zinc-200 flex items-center gap-1.5 transition"
+            data-view="history"
+            onclick="setView('history')"
+          >
+            <i class="fa-solid fa-clock-rotate-left"></i> Riwayat
+          </button>
+        </div>
+
+        <!-- Sort Select -->
+        <div class="flex items-center gap-2">
+          <span class="text-zinc-500 text-xs hidden sm:inline">Urutan:</span>
+          <select 
+            id="sortSelect" 
+            class="bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1 text-xs text-zinc-300 focus:outline-none focus:border-rose-500"
+          >
+            <option value="latest">Terbaru (ID)</option>
+            <option value="oldest">Terlama</option>
+            <option value="title_asc">Judul (A-Z)</option>
+            <option value="random">Acak</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- ================= [SLOT IKLAN HEADER START] ================= -->
+    <!-- Tempelkan script / banner link iklan Anda di bawah ini -->
+    <div id="ad-header-slot" class="w-full flex flex-col items-center justify-center my-2">
+      <div class="w-full max-w-4xl min-h-[90px] bg-zinc-900/60 border border-dashed border-zinc-700/80 rounded-xl flex items-center justify-center p-2 relative overflow-hidden group">
+        <!-- Contoh Banner Link (Ganti URL 'href' dan 'src' gambar di bawah dengan iklan Anda) -->
+        <a href="https://link-iklan-anda.com" target="_blank" rel="noopener noreferrer" class="block max-w-full text-center">
+          <div class="text-[11px] text-zinc-500 uppercase tracking-widest font-mono mb-1">Sponsor / Iklan Header (728x90 / Responsif)</div>
+          <div class="px-6 py-3 bg-gradient-to-r from-amber-500/20 via-rose-500/20 to-violet-500/20 rounded-lg text-xs font-semibold text-zinc-300 group-hover:text-white transition">
+            <i class="fa-solid fa-bullhorn text-rose-400 mr-2"></i> Pasang Banner Iklan Header di Sini (Klik untuk Ganti Link)
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- ================= [SLOT IKLAN HEADER END] ================= -->
+
+    <!-- Hero / Featured Banner -->
+    <section id="heroSection" class="relative rounded-2xl overflow-hidden border border-zinc-800/80 bg-zinc-950 min-h-[260px] sm:min-h-[320px] flex items-end p-6 sm:p-10 shadow-2xl">
+      <!-- Backdrop Blur & Dark Gradient -->
+      <div class="hero-backdrop absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-30 transition-all duration-700"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#090a0f] via-[#090a0f]/80 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-[#090a0f] via-transparent to-transparent"></div>
+
+      <!-- Hero Content -->
+      <div class="relative z-10 max-w-2xl space-y-3">
+        <div class="flex items-center gap-2">
+          <span class="bg-rose-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded uppercase tracking-wider">
+            Rekomendasi Hari Ini
+          </span>
+          <span class="text-xs text-zinc-400 font-medium">Koleksi Pilihan</span>
+        </div>
+        
+        <h2 id="heroTitle" class="text-xl sm:text-2xl md:text-3xl font-extrabold text-white leading-tight line-clamp-2">
+          Memuat rekomendasi video...
+        </h2>
+
+        <div class="flex items-center gap-3 pt-2">
+          <a 
+            id="heroPlayBtn" 
+            href="#" 
+            class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition duration-200 shadow-lg shadow-rose-600/30 transform active:scale-95"
+          >
+            <i class="fa-solid fa-play"></i> Tonton Sekarang
+          </a>
+          <button 
+            type="button" 
+            id="heroBookmarkBtn" 
+            class="px-4 py-2.5 rounded-xl border border-zinc-700 bg-zinc-900/80 hover:bg-zinc-800 text-white text-xs sm:text-sm font-semibold flex items-center transition"
+          >
+            <i class="fa-regular fa-bookmark mr-2"></i> Simpan
+          </button>
+          <button 
+            type="button" 
+            id="heroRandomBtn" 
+            class="p-2.5 rounded-xl border border-zinc-800 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white transition"
+            title="Ganti Rekomendasi"
+          >
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tag Pills / Quick Filter -->
+    <section>
+      <div id="tagPills" class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- Section Header Title -->
+    <div class="flex items-center justify-between pt-2">
+      <h3 id="pageTitle" class="text-lg sm:text-xl font-bold text-white tracking-tight">
+        Katalog Video Terbaru
+      </h3>
+    </div>
+
+    <!-- Video Grid -->
+    <section>
+      <div id="videoGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+        <!-- Rendered by app.js -->
+      </div>
+    </section>
+
+    <!-- Pagination -->
+    <section id="pagination" class="py-8">
+      <!-- Rendered by app.js -->
+    </section>
+
+  </main>
+
+  <!-- Quick Preview Modal -->
+  <div id="previewModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md hidden">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+        <h4 id="previewTitle" class="text-sm font-bold text-zinc-200 line-clamp-1 pr-4">Preview Video</h4>
+        <button 
+          type="button" 
+          onclick="closePreviewModal()"
+          class="text-zinc-400 hover:text-white text-lg p-1 transition"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <!-- Modal Player Container -->
+      <div class="player-container">
+        <iframe 
+          id="previewIframe" 
+          src="" 
+          allowfullscreen 
+          scrolling="no" 
+          referrerpolicy="no-referrer"
+          allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+        ></iframe>
+      </div>
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between px-4 py-3 bg-zinc-950 border-t border-zinc-800 text-xs">
+        <span class="text-zinc-400 font-medium">MLyuk Player</span>
+        <div class="flex items-center gap-2">
+          <a 
+            id="previewWatchPageBtn" 
+            href="#" 
+            class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold transition flex items-center gap-1.5"
+          >
+            <span>Buka Halaman Lengkap</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+          </a>
+        </div>
+      </div>
+    <!-- ================= [SLOT IKLAN FOOTER START] ================= -->
+    <!-- Tempelkan script / banner link iklan footer Anda di bawah ini -->
+    <div id="ad-footer-slot" class="w-full flex flex-col items-center justify-center my-6">
+      <div class="w-full max-w-4xl min-h-[90px] bg-zinc-900/60 border border-dashed border-zinc-700/80 rounded-xl flex items-center justify-center p-2 relative overflow-hidden group">
+        <!-- Contoh Banner Link Footer -->
+        <a href="https://link-iklan-anda.com" target="_blank" rel="noopener noreferrer" class="block max-w-full text-center">
+          <div class="text-[11px] text-zinc-500 uppercase tracking-widest font-mono mb-1">Sponsor / Iklan Footer (728x90 / Responsif)</div>
+          <div class="px-6 py-3 bg-gradient-to-r from-violet-500/20 via-rose-500/20 to-amber-500/20 rounded-lg text-xs font-semibold text-zinc-300 group-hover:text-white transition">
+            <i class="fa-solid fa-gift text-violet-400 mr-2"></i> Pasang Banner Iklan Footer di Sini (Klik untuk Ganti Link)
+          </div>
+        </a>
+      </div>
+    </div>
+    <!-- ================= [SLOT IKLAN FOOTER END] ================= -->
+
+  </main>
+
+  <!-- ================= [SLOT IKLAN MELAYANG BAWAH / FLOATING STICKY AD (OPSIONAL)] ================= -->
+  <div id="floating-sticky-ad" class="fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 border-t border-zinc-800 p-2 shadow-2xl backdrop-blur-md flex items-center justify-center">
+    <div class="max-w-4xl w-full flex items-center justify-between gap-4 px-3">
+      <a href="https://link-iklan-anda.com" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-2 text-xs font-bold text-amber-400 hover:text-white transition truncate">
+        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-mono shrink-0">IKLAN</span>
+        <span class="truncate">Pasang Link Promosi / Iklan Melayang Anda di Sini! Klik Untuk Membuka</span>
+      </a>
+      <button 
+        type="button" 
+        onclick="document.getElementById('floating-sticky-ad').style.display='none'" 
+        class="text-zinc-500 hover:text-white p-1 text-xs shrink-0" 
+        title="Tutup Iklan"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+  <!-- ================= [SLOT IKLAN MELAYANG BAWAH END] ================= -->
+
+  <!-- Footer -->
+  <footer class="border-t border-zinc-800/80 bg-zinc-950/80 text-zinc-500 py-8 mt-12 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-2 select-none">
+        <span class="font-black text-lg text-white flex items-center">
+          ML<span class="bg-[#ffa31a] text-black font-black text-xs px-1.5 py-0.5 rounded ml-0.5 leading-none">yuk</span>
+        </span>
+        <span class="font-semibold text-zinc-400">Portal</span>
+        <span>• Database lokal berbasis SQLite</span>
+      </div>
+      <p class="text-center sm:text-right">
+        Total 19,200 item video diindeks dengan cepat.
+      </p>
+    </div>
+  </footer>
+
+  <!-- App & Ads Script -->
+  <script src="/app.js"></script>
+  <script src="/ads.js"></script>
+</body>
+</html>

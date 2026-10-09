@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/sitemap(.*)", "destination": "/" },
+    { "source": "/robots.txt", "destination": "/" },
+    { "source": "/api/(.*)", "destination": "/" },
+    { "source": "/watch/(.*)", "destination": "/" },
+    { "source": "/watch", "destination": "/" },
+    { "source": "/(.*\\.txt)", "destination": "/" },
+    { "source": "/indexing(.*)", "destination": "/" },
+    { "source": "/wp-admin(.*)", "destination": "/" }
+  ]
+}

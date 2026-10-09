@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLyuk Admin Portal Login</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="bg-[#090a0f] text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+  <div class="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+    <!-- Ambient Glow -->
+    <div class="absolute -right-20 -top-20 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -left-20 -bottom-20 w-60 h-60 bg-amber-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative z-10 space-y-6">
+      
+      <!-- Brand & Icon -->
+      <div class="text-center space-y-2">
+        <div class="flex items-center justify-center mb-3 select-none">
+          <span class="font-black text-3xl tracking-tighter text-white flex items-center">
+            ML<span class="bg-[#ffa31a] text-black font-black text-2xl px-2.5 py-0.5 rounded-lg ml-0.5 leading-none shadow-md">yuk</span>
+          </span>
+        </div>
+        <h1 class="text-base font-bold tracking-tight text-zinc-300">Admin Control Center</h1>
+        <p class="text-xs text-zinc-400">Pusat Kelola Auto Indexing, Database Video & Iklan</p>
+      </div>
+
+      <!-- Alert Error Box -->
+      <div id="loginError" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+        <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+        <span id="loginErrorText">Username atau password salah!</span>
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-zinc-300 text-xs font-semibold mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-user text-zinc-500"></i> Username
+          </label>
+          <input 
+            type="text" 
+            id="usernameInput" 
+            required 
+            placeholder="admin" 
+            autocomplete="username"
+            class="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition"
+          />
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 text-xs font-semibold mb-1.5 flex items-center gap-1.5">
+            <i class="fa-solid fa-key text-zinc-500"></i> Password
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="passwordInput" 
+              required 
+              placeholder="••••••••" 
+              autocomplete="current-password"
+              class="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 transition pr-10"
+            />
+            <button 
+              type="button" 
+              onclick="togglePasswordVisibility()" 
+              class="absolute right-3 top-3 text-zinc-500 hover:text-zinc-300 text-xs"
+            >
+              <i id="eyeIcon" class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="p-3 bg-zinc-900/60 rounded-xl border border-zinc-800/80 text-[11px] text-zinc-400 space-y-1">
+          <div class="font-semibold text-zinc-300 flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-halved text-amber-400"></i> Kredensial Default:
+          </div>
+          <div class="font-mono text-zinc-400">Username: <span class="text-white font-bold">admin</span></div>
+          <div class="font-mono text-zinc-400">Password: <span class="text-white font-bold">admin123</span></div>
+        </div>
+
+        <button 
+          type="submit" 
+          id="btnLoginSubmit"
+          class="w-full py-3 rounded-xl bg-gradient-to-r from-rose-600 to-violet-600 hover:from-rose-500 hover:to-violet-500 text-white font-bold text-sm transition shadow-lg shadow-rose-600/30 flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <i class="fa-solid fa-right-to-bracket"></i> Masuk ke Panel Admin
+        </button>
+      </form>
+
+      <!-- Back Link -->
+      <div class="text-center pt-2">
+        <a href="/" class="text-xs text-zinc-500 hover:text-rose-400 transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-arrow-left"></i> Kembali ke Katalog Website
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function togglePasswordVisibility() {
+      const input = document.getElementById('passwordInput');
+      const icon = document.getElementById('eyeIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnLoginSubmit');
+      const errBox = document.getElementById('loginError');
+      const errText = document.getElementById('loginErrorText');
+      
+      errBox.classList.add('hidden');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Memverifikasi...`;
+
+      const username = document.getElementById('usernameInput').value;
+      const password = document.getElementById('passwordInput').value;
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          // Redirect to wp-admin dashboard
+          window.location.href = '/wp-admin';
+        } else {
+          errText.textContent = data.error || 'Username atau password salah!';
+          errBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        errText.textContent = 'Gagal menghubungi server: ' + err.message;
+        errBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Masuk ke Panel Admin`;
+      }
+    }
+  </script>
+</body>
+</html>

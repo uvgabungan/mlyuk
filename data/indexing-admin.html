@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Indexing Control Center - Google, Bing, Yandex | MLyuk</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body class="bg-[#090a0f] text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 nav-glass border-b border-zinc-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <a href="/" class="flex items-center shrink-0 group select-none">
+          <span class="font-black text-2xl tracking-tighter text-white flex items-center">
+            ML<span class="bg-[#ffa31a] text-black font-black text-lg px-2 py-0.5 rounded-lg ml-0.5 leading-none shadow-md">yuk</span>
+          </span>
+        </a>
+
+        <!-- Title Badge & Actions -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button 
+            type="button" 
+            onclick="handleExecuteDeploy()" 
+            id="headerDeployBtn"
+            class="px-3 sm:px-4 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white font-bold text-xs shadow-lg shadow-amber-500/20 transition flex items-center gap-1.5 group"
+            title="Deploy Otomatis ke Vercel (1-Klik)"
+          >
+            <i class="fa-solid fa-rocket group-hover:-translate-y-0.5 transition-transform text-white"></i>
+            <span class="hidden sm:inline">Deploy ke Vercel</span>
+            <span class="sm:hidden">Deploy</span>
+          </button>
+          <a href="/" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Lihat Web</span>
+          </a>
+          <button 
+            type="button" 
+            onclick="handleAdminLogout()" 
+            class="px-3 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white text-xs font-semibold transition flex items-center gap-1.5"
+            title="Keluar dari sesi admin"
+          >
+            <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Logout</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Hero Banner -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-900/90 to-zinc-950 border border-zinc-800 p-6 sm:p-8 shadow-2xl">
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-rose-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute right-40 top-0 w-64 h-64 bg-violet-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 max-w-3xl space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-rose-600/20 text-rose-400 text-xs font-semibold">
+          <i class="fa-solid fa-bolt"></i> Real-time Push Protocol
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Pusat Kontrol Auto-Indexing Mesin Pencari
+        </h1>
+        <p class="text-zinc-400 text-sm sm:text-base leading-relaxed">
+          Sistem otomatisasi pengiriman URL ke mesin pencari global menggunakan protokol 
+          <strong class="text-zinc-200">IndexNow (Microsoft Bing & Yandex)</strong>, 
+          <strong class="text-zinc-200">Google Sitemap Ping</strong>, dan 
+          <strong class="text-zinc-200">Google Video Rich Snippets (Schema.org VideoObject)</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 space-y-2">
+        <div class="flex items-center justify-between text-zinc-400 text-xs font-medium">
+          <span>Total Database Video</span>
+          <i class="fa-solid fa-film text-rose-500 text-base"></i>
+        </div>
+        <div class="text-2xl font-bold text-white" id="statVideos">19,200</div>
+        <div class="text-[11px] text-zinc-500">Semua siap di-crawl & di-index</div>
+      </div>
+
+      <div class="bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 space-y-2">
+        <div class="flex items-center justify-between text-zinc-400 text-xs font-medium">
+          <span>XML Sitemaps</span>
+          <i class="fa-solid fa-sitemap text-violet-500 text-base"></i>
+        </div>
+        <div class="text-2xl font-bold text-white">5 File XML</div>
+        <div class="text-[11px] text-zinc-500">Video XML Schema 1.1 compliant</div>
+      </div>
+
+      <div class="bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 space-y-2">
+        <div class="flex items-center justify-between text-zinc-400 text-xs font-medium">
+          <span>Bing & Yandex IndexNow</span>
+          <i class="fa-brands fa-microsoft text-sky-500 text-base"></i>
+        </div>
+        <div class="text-2xl font-bold text-emerald-400">Siap Kirim</div>
+        <div class="text-[11px] text-zinc-500">Kunci verifikasi terpasang</div>
+      </div>
+
+      <div class="bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 space-y-2">
+        <div class="flex items-center justify-between text-zinc-400 text-xs font-medium">
+          <span>Google Rich Snippets</span>
+          <i class="fa-brands fa-google text-amber-500 text-base"></i>
+        </div>
+        <div class="text-2xl font-bold text-amber-400">VideoObject</div>
+        <div class="text-[11px] text-zinc-500">JSON-LD aktif di semua video</div>
+      </div>
+    </div>
+
+    <!-- ================= [VERCEL 1-CLICK DEPLOY HOOK CARD] ================= -->
+    <div id="deployHookSection" class="bg-gradient-to-br from-zinc-900/95 via-zinc-950 to-zinc-900/95 border border-amber-500/40 rounded-2xl p-6 shadow-2xl relative overflow-hidden transition-all duration-300">
+      <!-- Ambient Glow -->
+      <div class="absolute -right-20 -top-20 w-52 h-52 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-zinc-800/80 pb-4 mb-5">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm shadow">
+              <i class="fa-solid fa-rocket"></i>
+            </span>
+            Deploy Otomatis ke Vercel (1-Klik)
+          </h2>
+          <p class="text-xs text-zinc-400 mt-1">
+            Kirim sinyal update/build ke Vercel langsung dari halaman ini tanpa perlu membuka terminal CMD.
+          </p>
+        </div>
+
+        <button 
+          type="button" 
+          onclick="handleExecuteDeploy()" 
+          id="mainDeployBtn"
+          class="w-full md:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-violet-600 hover:opacity-95 text-white font-bold text-xs shadow-lg shadow-amber-500/25 transition flex items-center justify-center gap-2 shrink-0 group"
+        >
+          <i class="fa-solid fa-bolt text-amber-200 group-hover:scale-110 transition-transform"></i>
+          <span>Deploy Sekarang (1-Klik)</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 text-xs">
+        <!-- Input Deploy Hook URL & Auto Toggle -->
+        <div class="lg:col-span-2 space-y-3">
+          <label class="block font-semibold text-zinc-200">
+            Vercel Deploy Hook URL
+            <span class="text-[11px] text-zinc-400 font-normal ml-1">(Dibuat di dashboard Vercel &gt; Settings &gt; Git &gt; Deploy Hooks)</span>
+          </label>
+          <div class="flex gap-2">
+            <input 
+              type="url" 
+              id="vercelDeployHookInput" 
+              placeholder="https://api.vercel.com/v1/integrations/deploy/prj_xxxx/xxxxxx" 
+              class="flex-1 px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white font-mono text-xs placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition shadow-inner"
+            />
+            <button 
+              type="button" 
+              onclick="saveDeployHookUrl()" 
+              class="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold transition border border-zinc-700 shrink-0"
+            >
+              <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan
+            </button>
+          </div>
+
+          <div class="pt-1">
+            <label class="flex items-center gap-2.5 cursor-pointer text-zinc-300 select-none">
+              <input 
+                type="checkbox" 
+                id="autoDeployOnActionCheckbox" 
+                onchange="saveDeployHookUrl()"
+                class="rounded bg-zinc-900 border-zinc-700 text-amber-500 focus:ring-0 w-4 h-4 cursor-pointer" 
+              />
+              <span>Otomatis panggil deploy setiap kali selesai impor CSV atau menghapus video</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Panduan Singkat -->
+        <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-4 text-[11px] space-y-2 text-zinc-400">
+          <div class="font-bold text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-question text-amber-400"></i> Cara Buat Hook di Vercel:
+          </div>
+          <ol class="list-decimal list-inside space-y-1 leading-relaxed text-zinc-300">
+            <li>Buka <a href="https://vercel.com" target="_blank" class="text-amber-400 underline font-medium">vercel.com</a> &gt; pilih project <strong>streaming-web</strong>.</li>
+            <li>Klik menu <strong>Settings</strong> &gt; pilih <strong>Git</strong>.</li>
+            <li>Scroll ke <strong>Deploy Hooks</strong> &gt; buat nama hook &gt; <strong>Create Hook</strong>.</li>
+            <li>Salin URL hook dan tempel di kotak input sebelah kiri.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <!-- ================= [VERCEL 1-CLICK DEPLOY HOOK CARD END] ================= -->
+
+    <!-- Actions & Control Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Panel 1: IndexNow Settings & Push (Microsoft Bing & Yandex) -->
+      <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-6 flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 text-lg">
+                <i class="fa-solid fa-paper-plane"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  IndexNow Protocol (Bing & Yandex)
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Aktif</span>
+                </h2>
+                <p class="text-xs text-zinc-400">Pengaturan resmi pengiriman URL langsung ke mesin pencari</p>
+              </div>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded bg-sky-500/10 text-sky-400 font-semibold border border-sky-500/20">
+              Protokol Resmi
+            </span>
+          </div>
+
+          <!-- Pengaturan Kunci Verifikasi API Key -->
+          <div class="bg-zinc-950/70 rounded-xl p-4 border border-zinc-800/80 space-y-3">
+            <div class="flex items-center justify-between border-b border-zinc-800/60 pb-2">
+              <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-key text-amber-400"></i> Pengaturan API Key Verifikasi
+              </span>
+              <button 
+                type="button" 
+                onclick="generateNewIndexNowKey()"
+                class="text-[11px] text-zinc-400 hover:text-white transition flex items-center gap-1"
+                title="Buat Kunci Acak Baru"
+              >
+                <i class="fa-solid fa-arrows-rotate"></i> Generate Key Baru
+              </button>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex flex-col sm:flex-row gap-2">
+                <input 
+                  type="text" 
+                  id="inputIndexNowKey" 
+                  value="streamhubindexnow2026auto789" 
+                  class="flex-1 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs font-mono text-zinc-200 focus:outline-none focus:border-sky-500"
+                  placeholder="Key IndexNow (min. 8 karakter hex/alphanumeric)"
+                />
+                <button 
+                  type="button" 
+                  onclick="saveIndexNowKeySetting()" 
+                  id="btnSaveIndexNowKey"
+                  class="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-semibold text-xs transition shrink-0 flex items-center justify-center gap-1.5"
+                >
+                  <i class="fa-solid fa-check"></i> Simpan Key
+                </button>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between text-[11px] text-zinc-400 pt-1 gap-2">
+                <span>File Verifikasi Server:</span>
+                <a id="keyLocationLink" href="/streamhubindexnow2026auto789.txt" target="_blank" class="font-mono text-rose-400 hover:underline flex items-center gap-1">
+                  <span id="keyLocationText">/streamhubindexnow2026auto789.txt</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pilihan Target Mesin Pencari (Bing & Yandex) -->
+          <div class="bg-zinc-950/70 rounded-xl p-4 border border-zinc-800/80 space-y-3">
+            <div class="text-xs font-bold text-white flex items-center gap-1.5 border-b border-zinc-800/60 pb-2">
+              <i class="fa-solid fa-sliders text-sky-400"></i> Target Mesin Pencari & Gateway
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <!-- Microsoft Bing Switch -->
+              <label class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/60 cursor-pointer hover:border-zinc-700 transition">
+                <div class="flex items-center gap-2">
+                  <i class="fa-brands fa-microsoft text-sky-400"></i>
+                  <div>
+                    <div class="font-semibold text-white">Microsoft Bing</div>
+                    <div class="text-[10px] text-zinc-500">bing.com/indexnow</div>
+                  </div>
+                </div>
+                <input type="checkbox" id="targetBing" checked class="w-4 h-4 rounded bg-zinc-800 text-sky-600 focus:ring-0 cursor-pointer" />
+              </label>
+
+              <!-- Yandex Switch -->
+              <label class="flex items-center justify-between p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/60 cursor-pointer hover:border-zinc-700 transition">
+                <div class="flex items-center gap-2">
+                  <i class="fa-brands fa-yandex text-rose-500 text-sm"></i>
+                  <div>
+                    <div class="font-semibold text-white">Yandex Search</div>
+                    <div class="text-[10px] text-zinc-500">yandex.com/indexnow</div>
+                  </div>
+                </div>
+                <input type="checkbox" id="targetYandex" checked class="w-4 h-4 rounded bg-zinc-800 text-rose-600 focus:ring-0 cursor-pointer" />
+              </label>
+
+              <!-- IndexNow Hub / Seznam / Naver -->
+              <label class="sm:col-span-2 flex items-center justify-between p-2.5 rounded-lg bg-zinc-900/60 border border-zinc-800/60 cursor-pointer hover:border-zinc-700 transition">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-network-wired text-emerald-400"></i>
+                  <div>
+                    <div class="font-semibold text-white">IndexNow Central Hub (api.indexnow.org)</div>
+                    <div class="text-[10px] text-zinc-500">Otomatis membagikan sinyal ke Seznam.cz, Naver, dan mesin mitra</div>
+                  </div>
+                </div>
+                <input type="checkbox" id="targetHub" checked class="w-4 h-4 rounded bg-zinc-800 text-emerald-600 focus:ring-0 cursor-pointer" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Quick Action Kirim Batch -->
+          <div class="space-y-2">
+            <label class="block text-xs font-medium text-zinc-300">Pilih Jumlah URL yang Akan Dikirim:</label>
+            <div class="grid grid-cols-4 gap-2">
+              <button onclick="submitIndexNowBatch(50)" class="py-2 px-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white transition border border-zinc-700 flex flex-col items-center gap-0.5">
+                <span class="text-zinc-400 text-[10px]">Cepat</span>
+                <span>50 URL</span>
+              </button>
+              <button onclick="submitIndexNowBatch(200)" class="py-2 px-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white transition border border-zinc-700 flex flex-col items-center gap-0.5">
+                <span class="text-zinc-400 text-[10px]">Standar</span>
+                <span>200 URL</span>
+              </button>
+              <button onclick="submitIndexNowBatch(1000)" class="py-2 px-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white transition border border-zinc-700 flex flex-col items-center gap-0.5">
+                <span class="text-zinc-400 text-[10px]">Besar</span>
+                <span>1,000 URL</span>
+              </button>
+              <button onclick="submitIndexNowBatch(5000)" class="py-2 px-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-white transition border border-zinc-700 flex flex-col items-center gap-0.5">
+                <span class="text-zinc-400 text-[10px]">Maksimal</span>
+                <span>5,000 URL</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button 
+          id="btnSubmitIndexNow"
+          onclick="submitIndexNowBatch(100)" 
+          class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-bold text-sm transition shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2 cursor-pointer mt-4"
+        >
+          <i class="fa-solid fa-bolt"></i> Kirim 100 URL Sekarang (Bing & Yandex)
+        </button>
+      </div>
+
+      <!-- Panel 2: Google & Search Engine Sitemaps -->
+      <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-6 flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-lg">
+                <i class="fa-solid fa-sitemap"></i>
+              </div>
+              <div>
+                <h2 class="text-base font-bold text-white">Google & Bing Sitemap Ping</h2>
+                <p class="text-xs text-zinc-400">Kirim sinyal update ke Googlebot dan Bingbot</p>
+              </div>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded bg-amber-500/10 text-amber-400 font-semibold border border-amber-500/20">
+              Sitemap 0.9
+            </span>
+          </div>
+
+          <div class="bg-zinc-950/70 rounded-xl p-4 border border-zinc-800/80 text-xs space-y-2">
+            <div class="flex items-center justify-between text-zinc-300">
+              <span class="text-zinc-400">Master Sitemap Index:</span>
+              <a href="/sitemap.xml" target="_blank" class="font-mono text-amber-400 hover:underline">
+                /sitemap.xml <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+              </a>
+            </div>
+            <div class="flex items-center justify-between text-zinc-300">
+              <span class="text-zinc-400">Single All Sitemap:</span>
+              <a href="/sitemap-all.xml" target="_blank" class="font-mono text-amber-400 hover:underline">
+                /sitemap-all.xml <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+              </a>
+            </div>
+            <div class="flex items-center justify-between text-zinc-300">
+              <span class="text-zinc-400">Robots Directive:</span>
+              <a href="/robots.txt" target="_blank" class="font-mono text-amber-400 hover:underline">
+                /robots.txt <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-xs text-zinc-400 leading-relaxed">
+            <p>
+              <i class="fa-solid fa-circle-check text-emerald-400 mr-1.5"></i>
+              Mencakup semua 19,200 video dengan tag <code class="text-amber-300">&lt;video:video&gt;</code> untuk Google Video Carousel.
+            </p>
+            <p>
+              <i class="fa-solid fa-circle-check text-emerald-400 mr-1.5"></i>
+              Pemberitahuan real-time langsung ke endpoint ping search engine.
+            </p>
+          </div>
+        </div>
+
+        <button 
+          id="btnPingGoogle"
+          onclick="pingSitemaps()" 
+          class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-sm transition shadow-lg shadow-amber-600/20 flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-bullhorn"></i> Ping Google & Bing dengan Sitemap Sekarang
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Sitemap List Explorer -->
+    <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-rose-500"></i>
+          Daftar Sitemap yang Dihasilkan
+        </h3>
+        <span class="text-xs text-zinc-400">Salin URL ini untuk Google Search Console & Yandex Webmaster</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="sitemapList">
+        <div class="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-semibold text-white">Sitemap Index</div>
+            <div class="text-[11px] text-zinc-500">Induk semua sitemap</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="/sitemap.xml" target="_blank" class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300">Buka</a>
+            <button onclick="copyToClipboard('/sitemap.xml')" class="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white transition">Salin</button>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-semibold text-white">Pages Sitemap</div>
+            <div class="text-[11px] text-zinc-500">Beranda, favorit, riwayat</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="/sitemap/pages.xml" target="_blank" class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300">Buka</a>
+            <button onclick="copyToClipboard('/sitemap/pages.xml')" class="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white transition">Salin</button>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-semibold text-white">Videos Bagian 1</div>
+            <div class="text-[11px] text-zinc-500">Video 1 - 5,000</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="/sitemap/videos-1.xml" target="_blank" class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300">Buka</a>
+            <button onclick="copyToClipboard('/sitemap/videos-1.xml')" class="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white transition">Salin</button>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-semibold text-white">Videos Bagian 2</div>
+            <div class="text-[11px] text-zinc-500">Video 5,001 - 10,000</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="/sitemap/videos-2.xml" target="_blank" class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300">Buka</a>
+            <button onclick="copyToClipboard('/sitemap/videos-2.xml')" class="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white transition">Salin</button>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-semibold text-white">Videos Bagian 3</div>
+            <div class="text-[11px] text-zinc-500">Video 10,001 - 15,000</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="/sitemap/videos-3.xml" target="_blank" class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300">Buka</a>
+            <button onclick="copyToClipboard('/sitemap/videos-3.xml')" class="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white transition">Salin</button>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-zinc-950/60 border border-zinc-800/80 flex items-center justify-between text-xs">
+          <div>
+            <div class="font-semibold text-white">Videos Bagian 4</div>
+            <div class="text-[11px] text-zinc-500">Video 15,001 - 19,200</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <a href="/sitemap/videos-4.xml" target="_blank" class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300">Buka</a>
+            <button onclick="copyToClipboard('/sitemap/videos-4.xml')" class="px-2 py-1 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white transition">Salin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Management Section (Tambah & Hapus Video) -->
+    <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-zinc-800 pb-4">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-rose-500"></i>
+            Manajemen Video (Tambah & Hapus Video)
+          </h3>
+          <p class="text-xs text-zinc-400">Tambahkan video baru, hapus video, atau impor data CSV tambahan ke database.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 font-semibold" id="mgmtTotalVideos">
+            19,200 Video Terdaftar
+          </span>
+        </div>
+      </div>
+
+      <!-- Grid: Tambah Video Baru & Cari/Hapus Video -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Form Tambah Video -->
+        <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-plus-circle text-emerald-400"></i>
+              Tambah Video Baru
+            </h4>
+            <span class="text-[11px] text-zinc-500">Auto ID Generated</span>
+          </div>
+
+          <form id="addVideoForm" onsubmit="handleFormAddVideo(event)" class="space-y-3 text-xs">
+            <div>
+              <label class="block text-zinc-400 font-medium mb-1">Judul Video *</label>
+              <input 
+                type="text" 
+                id="newVideoTitle" 
+                required 
+                placeholder="Contoh: Video Streaming Baru Kualitas HD..." 
+                class="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+              />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-zinc-400 font-medium mb-1">URL Gambar / Poster</label>
+                <input 
+                  type="url" 
+                  id="newVideoImage" 
+                  placeholder="https://.../cover.jpg" 
+                  class="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+              <div>
+                <label class="block text-zinc-400 font-medium mb-1">URL Iframe Embed Player *</label>
+                <input 
+                  type="url" 
+                  id="newVideoIframe" 
+                  required 
+                  placeholder="https://ystream.id/e/..." 
+                  class="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-zinc-400 font-medium mb-1">URL Asli / VideoURL (Opsional)</label>
+              <input 
+                type="url" 
+                id="newVideoSource" 
+                placeholder="https://avtub.so/watch/..." 
+                class="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+              />
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <input type="checkbox" id="chkAutoIndex" checked class="rounded border-zinc-700 bg-zinc-800 text-rose-600 focus:ring-rose-500" />
+              <label for="chkAutoIndex" class="text-zinc-300 text-[11px] cursor-pointer">
+                Kirim langsung ke Bing & Yandex via IndexNow setelah ditambahkan
+              </label>
+            </div>
+
+            <button 
+              type="submit" 
+              id="btnAddVideo"
+              class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 mt-2"
+            >
+              <i class="fa-solid fa-check"></i> Tambahkan Video ke Database
+            </button>
+          </form>
+        </div>
+
+        <!-- Cari & Hapus Video -->
+        <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-5 space-y-4 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-trash-can text-rose-400"></i>
+                Cari & Hapus Video
+              </h4>
+              <span class="text-[11px] text-zinc-500">Hapus berdasarkan ID / Judul</span>
+            </div>
+
+            <div class="relative">
+              <input 
+                type="text" 
+                id="searchDeleteInput" 
+                oninput="debounceSearchDelete(this.value)" 
+                placeholder="Ketik judul atau ID video yang ingin dicari..." 
+                class="w-full pl-9 pr-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+              />
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-zinc-500 text-xs"></i>
+            </div>
+
+            <!-- Hasil Pencarian Video untuk Hapus -->
+            <div id="deleteSearchResults" class="space-y-2 max-h-56 overflow-y-auto pr-1 text-xs">
+              <div class="text-zinc-500 text-center py-6 text-[11px]">
+                Ketik nama judul atau ID di atas untuk mencari video yang ingin dihapus.
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-400">
+            <span>💡 Perubahan langsung tersimpan ke data database.</span>
+            <button onclick="scrollToDeploySection()" class="text-amber-400 hover:underline font-semibold flex items-center gap-1"><i class="fa-solid fa-rocket text-xs"></i> Deploy ke Live Vercel</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bulk Import CSV Section Accordion -->
+      <details class="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-4 text-xs group">
+        <summary class="font-semibold text-zinc-300 hover:text-white cursor-pointer flex items-center justify-between">
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-file-csv text-amber-400 text-sm"></i>
+            Impor CSV Baru dalam Jumlah Banyak (Bulk Scrapper Import)
+          </span>
+          <i class="fa-solid fa-chevron-down text-zinc-500 group-open:rotate-180 transition"></i>
+        </summary>
+        <div class="pt-4 space-y-3">
+          <p class="text-zinc-400 text-[11px]">
+            Format baris: <code class="text-amber-300">"Judul"|"ImageURL"|"VideoURL"|"IframeURL"</code> (sama seperti output scrapper).
+          </p>
+          <textarea 
+            id="csvBulkText" 
+            rows="5" 
+            placeholder='"Judul Video Baru"|"https://cover.jpg"|"https://video.com/..."|"https://iframe.com/..."' 
+            class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-lg font-mono text-[11px] text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-rose-500"
+          ></textarea>
+          <button 
+            onclick="handleBulkCsvImport()" 
+            class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition flex items-center gap-2"
+          >
+            <i class="fa-solid fa-upload"></i> Proses & Tambahkan Semua Video dari CSV
+          </button>
+        </div>
+      </details>
+    </div>
+
+    <!-- ================= AD MANAGEMENT PANEL (PENGATURAN IKLAN) ================= -->
+    <div class="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-zinc-800 pb-4">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-rectangle-ad text-amber-400"></i>
+            Pusat Pengaturan Iklan (Header, Footer, Player & Melayang)
+          </h3>
+          <p class="text-xs text-zinc-400">Atur link iklan, gambar banner, atau kode script iklan secara dinamis tanpa perlu edit kodingan.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold" id="adStatusBadge">
+            <i class="fa-solid fa-circle text-[8px] mr-1 text-emerald-400 animate-pulse"></i> Panel Iklan Aktif
+          </span>
+          <a href="/" target="_blank" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> Cek Tampilan Live
+          </a>
+        </div>
+      </div>
+
+      <form id="adsConfigForm" onsubmit="handleSaveAdsConfig(event)" class="space-y-6">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          
+          <!-- 1. Iklan Header (Top Banner) -->
+          <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-4 space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between border-b border-zinc-800/60 pb-2">
+                <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                  <i class="fa-solid fa-heading text-rose-400"></i> Iklan Header (Atas)
+                </span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="adHeaderEnabled" checked class="sr-only peer" />
+                  <div class="w-8 h-4 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">Link Tujuan Iklan (Klik)</label>
+                <input 
+                  type="url" 
+                  id="adHeaderLink" 
+                  placeholder="https://link-iklan-anda.com" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">URL Gambar Banner (728x90 / Responsif)</label>
+                <input 
+                  type="url" 
+                  id="adHeaderImage" 
+                  placeholder="https://.../banner-header.jpg" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">Custom Script / HTML (Opsional)</label>
+                <textarea 
+                  id="adHeaderHtml" 
+                  rows="2" 
+                  placeholder="<script>...</script> (Kosongkan jika menggunakan link banner di atas)" 
+                  class="w-full p-2 bg-zinc-900 border border-zinc-800 rounded-lg text-[10px] font-mono text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-rose-500"
+                ></textarea>
+              </div>
+            </div>
+            <div class="text-[10px] text-zinc-500">Muncul di atas beranda & halaman nonton.</div>
+          </div>
+
+          <!-- 2. Iklan Bawah Pemutar (Under Player) -->
+          <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-4 space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between border-b border-zinc-800/60 pb-2">
+                <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                  <i class="fa-solid fa-play-circle text-sky-400"></i> Iklan Bawah Player Video
+                </span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="adUnderPlayerEnabled" checked class="sr-only peer" />
+                  <div class="w-8 h-4 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">Link Tujuan Iklan (Klik)</label>
+                <input 
+                  type="url" 
+                  id="adUnderPlayerLink" 
+                  placeholder="https://link-iklan-anda.com" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">URL Gambar Banner</label>
+                <input 
+                  type="url" 
+                  id="adUnderPlayerImage" 
+                  placeholder="https://.../banner-player.jpg" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">Custom Script / HTML (Opsional)</label>
+                <textarea 
+                  id="adUnderPlayerHtml" 
+                  rows="2" 
+                  placeholder="<script>...</script> (Kosongkan jika menggunakan link banner di atas)" 
+                  class="w-full p-2 bg-zinc-900 border border-zinc-800 rounded-lg text-[10px] font-mono text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-rose-500"
+                ></textarea>
+              </div>
+            </div>
+            <div class="text-[10px] text-zinc-500">Khusus halaman pemutar nonton video.</div>
+          </div>
+
+          <!-- 3. Iklan Footer (Bawah) -->
+          <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-4 space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between border-b border-zinc-800/60 pb-2">
+                <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                  <i class="fa-solid fa-shoe-prints text-violet-400"></i> Iklan Footer (Bawah)
+                </span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="adFooterEnabled" checked class="sr-only peer" />
+                  <div class="w-8 h-4 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">Link Tujuan Iklan (Klik)</label>
+                <input 
+                  type="url" 
+                  id="adFooterLink" 
+                  placeholder="https://link-iklan-anda.com" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">URL Gambar Banner (728x90 / Responsif)</label>
+                <input 
+                  type="url" 
+                  id="adFooterImage" 
+                  placeholder="https://.../banner-footer.jpg" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">Custom Script / HTML (Opsional)</label>
+                <textarea 
+                  id="adFooterHtml" 
+                  rows="2" 
+                  placeholder="<script>...</script> (Kosongkan jika menggunakan link banner di atas)" 
+                  class="w-full p-2 bg-zinc-900 border border-zinc-800 rounded-lg text-[10px] font-mono text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-rose-500"
+                ></textarea>
+              </div>
+            </div>
+            <div class="text-[10px] text-zinc-500">Muncul sebelum footer di semua halaman.</div>
+          </div>
+
+        </div>
+
+        <!-- Baris Kedua: Floating Sticky & Popunder -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+          
+          <!-- 4. Iklan Melayang Bawah (Sticky Floating) -->
+          <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-zinc-800/60 pb-2">
+              <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-arrows-up-down-left-right text-amber-400"></i> Iklan Melayang Bawah (Sticky Bar)
+              </span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="adFloatingEnabled" checked class="sr-only peer" />
+                <div class="w-8 h-4 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+
+            <div class="space-y-2">
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">Teks Promosi Iklan Melayang</label>
+                <input 
+                  type="text" 
+                  id="adFloatingText" 
+                  placeholder="Pasang Link Promosi Anda di Sini! Klik Untuk Membuka" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+              <div>
+                <label class="block text-zinc-400 text-[11px] mb-1">Link Tujuan Iklan (Klik)</label>
+                <input 
+                  type="url" 
+                  id="adFloatingLink" 
+                  placeholder="https://link-iklan-anda.com" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500"
+                />
+              </div>
+            </div>
+            <p class="text-[10px] text-zinc-500">Melayang di bagian bawah layar smartphone dan desktop dengan tombol close [X].</p>
+          </div>
+
+          <!-- 5. Popunder / Direct Link Ad (3 Slot Acak) -->
+          <div class="bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-zinc-800/60 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-emerald-400"></i> Popunder / Direct Link
+                </span>
+                <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono border border-emerald-500/20">
+                  <i class="fa-solid fa-shuffle mr-1"></i> 3 Link Acak
+                </span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="adPopunderEnabled" class="sr-only peer" />
+                <div class="w-8 h-4 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+
+            <div class="space-y-2.5">
+              <!-- Panel Slot 1 -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-zinc-400 text-[11px] font-medium flex items-center gap-1">
+                    <span class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold flex items-center justify-center">1</span>
+                    Popunder Link 1 (Adsterra / Direct Link A)
+                  </label>
+                  <span class="text-[10px] text-zinc-500">Slot 1</span>
+                </div>
+                <input 
+                  type="url" 
+                  id="adPopunderLink1" 
+                  placeholder="https://otieu.com/... atau link smartlink 1" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500 font-mono text-[11px]"
+                />
+              </div>
+
+              <!-- Panel Slot 2 -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-zinc-400 text-[11px] font-medium flex items-center gap-1">
+                    <span class="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 text-[10px] font-bold flex items-center justify-center">2</span>
+                    Popunder Link 2 (ExoClick / Direct Link B)
+                  </label>
+                  <span class="text-[10px] text-zinc-500">Slot 2</span>
+                </div>
+                <input 
+                  type="url" 
+                  id="adPopunderLink2" 
+                  placeholder="https://... atau link smartlink 2" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500 font-mono text-[11px]"
+                />
+              </div>
+
+              <!-- Panel Slot 3 -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="text-zinc-400 text-[11px] font-medium flex items-center gap-1">
+                    <span class="w-4 h-4 rounded-full bg-violet-500/20 text-violet-400 text-[10px] font-bold flex items-center justify-center">3</span>
+                    Popunder Link 3 (PopAds / Monetag / Direct Link C)
+                  </label>
+                  <span class="text-[10px] text-zinc-500">Slot 3</span>
+                </div>
+                <input 
+                  type="url" 
+                  id="adPopunderLink3" 
+                  placeholder="https://... atau link smartlink 3" 
+                  class="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-rose-500 font-mono text-[11px]"
+                />
+              </div>
+            </div>
+
+            <p class="text-[10px] text-zinc-500 flex items-center gap-1.5 pt-1">
+              <i class="fa-solid fa-dice text-emerald-400"></i>
+              Sistem akan memilih salah satu dari 3 link di atas secara acak (random) saat pengunjung memicu popunder.
+            </p>
+          </div>
+
+          <!-- 6. Histats & Web Analytics Counter -->
+          <div class="md:col-span-2 bg-zinc-950/70 border border-zinc-800/80 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between border-b border-zinc-800/60 pb-2">
+              <span class="font-bold text-white text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-chart-line text-emerald-400"></i> Histats / Web Analytics Counter Code
+              </span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="adHistatsEnabled" checked class="sr-only peer" />
+                <div class="w-8 h-4 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+
+            <div>
+              <label class="block text-zinc-400 text-[11px] mb-1">
+                Tempelkan Kode Script / HTML Widget Histats di Sini:
+              </label>
+              <textarea 
+                id="adHistatsCode" 
+                rows="4" 
+                placeholder="<!-- Histats.com  START  (aync)-->&#10;<script type=&quot;text/javascript&quot;>var _Hasync= _Hasync|| []; ...</script>&#10;<!-- Histats.com  END  -->" 
+                class="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-[11px] font-mono text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-rose-500"
+              ></textarea>
+            </div>
+
+            <p class="text-[10px] text-zinc-500 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-info text-sky-400"></i>
+              Kode Histats ini otomatis dijalankan di seluruh halaman website (berada di bagian paling bawah dekat footer) untuk merekam statistik pengunjung real-time.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Tombol Simpan -->
+        <div class="pt-4 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-xs text-zinc-400 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-amber-400"></i>
+            <span>Perubahan langsung tersimpan dan aktif di website.</span>
+          </div>
+
+          <button 
+            type="submit" 
+            id="btnSaveAds"
+            class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-bold text-xs transition shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-floppy-disk"></i> Simpan Semua Pengaturan Iklan
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Live Execution Console / Logs -->
+    <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 space-y-3 font-mono">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <div class="flex items-center gap-2 text-xs text-zinc-300 font-semibold">
+          <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+          <span>Konsol Status & Laporan API Search Engine</span>
+        </div>
+        <button onclick="clearLogs()" class="text-[11px] text-zinc-500 hover:text-zinc-300">Bersihkan Log</button>
+      </div>
+
+      <div id="logConsole" class="h-48 overflow-y-auto text-xs space-y-1.5 text-zinc-400 p-2">
+        <div class="text-zinc-500">[System] Auto Indexing Engine diinisialisasi. Siap menerima instruksi.</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-zinc-800/80 py-6 text-center text-xs text-zinc-500">
+    <div class="max-w-7xl mx-auto px-4">
+      MLyuk &copy; 2026 &bull; Auto Indexing Engine powered for Google, Microsoft Bing, and Yandex.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    function logMessage(msg, type = 'info') {
+      const consoleBox = document.getElementById('logConsole');
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      
+      let color = 'text-zinc-400';
+      if (type === 'success') color = 'text-emerald-400 font-medium';
+      if (type === 'error') color = 'text-rose-400 font-medium';
+      if (type === 'warn') color = 'text-amber-400';
+
+      div.className = color;
+      div.innerHTML = `<span class="text-zinc-600">[${time}]</span> ${msg}`;
+      consoleBox.appendChild(div);
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    function clearLogs() {
+      document.getElementById('logConsole').innerHTML = '';
+      logMessage('Log dibersihkan.');
+    }
+
+    function copyToClipboard(path) {
+      const fullUrl = window.location.origin + path;
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        logMessage(`URL berhasil disalin: <span class="text-white">${fullUrl}</span>`, 'success');
+      });
+    }
+
+    // Load IndexNow Settings
+    async function loadIndexNowSettings() {
+      try {
+        const res = await fetch('/api/indexnow/settings');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data) return;
+
+        if (data.key) {
+          const keyInput = document.getElementById('inputIndexNowKey');
+          if (keyInput) keyInput.value = data.key;
+
+          const linkEl = document.getElementById('keyLocationLink');
+          const textEl = document.getElementById('keyLocationText');
+          if (linkEl && textEl) {
+            linkEl.href = `/${data.key}.txt`;
+            textEl.textContent = `/${data.key}.txt`;
+          }
+        }
+
+        if (data.bing) {
+          const bingEl = document.getElementById('targetBing');
+          if (bingEl) bingEl.checked = data.bing.enabled !== false;
+        }
+
+        if (data.yandex) {
+          const yandexEl = document.getElementById('targetYandex');
+          if (yandexEl) yandexEl.checked = data.yandex.enabled !== false;
+        }
+
+        if (data.indexnowOrg) {
+          const hubEl = document.getElementById('targetHub');
+          if (hubEl) hubEl.checked = data.indexnowOrg.enabled !== false;
+        }
+      } catch (err) {
+        console.warn('Gagal memuat setting IndexNow:', err);
+      }
+    }
+
+    // Save IndexNow Key & Engine settings
+    async function saveIndexNowKeySetting() {
+      const btn = document.getElementById('btnSaveIndexNowKey');
+      const keyVal = document.getElementById('inputIndexNowKey').value.trim();
+      if (!keyVal || keyVal.length < 8) {
+        alert('API Key IndexNow minimal 8 karakter!');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menyimpan...`;
+
+      const payload = {
+        key: keyVal,
+        bing: { enabled: document.getElementById('targetBing').checked },
+        yandex: { enabled: document.getElementById('targetYandex').checked },
+        indexnowOrg: { enabled: document.getElementById('targetHub').checked }
+      };
+
+      try {
+        const res = await fetch('/api/indexnow/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          logMessage(`Pengaturan IndexNow berhasil disimpan! Key aktif: <span class="font-mono text-white">${payload.key}</span>`, 'success');
+          const linkEl = document.getElementById('keyLocationLink');
+          const textEl = document.getElementById('keyLocationText');
+          if (linkEl && textEl) {
+            linkEl.href = `/${payload.key}.txt`;
+            textEl.textContent = `/${payload.key}.txt`;
+          }
+          alert(`Pengaturan IndexNow & Key (${payload.key}) berhasil disimpan!\nFile verifikasi: ${window.location.origin}/${payload.key}.txt siap digunakan.`);
+        } else {
+          logMessage(`Gagal menyimpan pengaturan IndexNow: ${data.error || 'Terjadi kesalahan'}`, 'error');
+        }
+      } catch (err) {
+        logMessage(`Error jaringan saat menyimpan IndexNow: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> Simpan Key`;
+      }
+    }
+
+    // Generate random alphanumeric 32-char key
+    function generateNewIndexNowKey() {
+      const chars = '0123456789abcdef';
+      let res = '';
+      for (let i = 0; i < 32; i++) {
+        res += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      document.getElementById('inputIndexNowKey').value = res;
+      logMessage(`Kunci IndexNow baru di-generate: <span class="font-mono text-sky-400">${res}</span>. Klik "Simpan Key" untuk mengaktifkan.`, 'warn');
+    }
+
+    // Submit batch to IndexNow
+    async function submitIndexNowBatch(count) {
+      const btn = document.getElementById('btnSubmitIndexNow');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Mengirim ${count} URL ke Bing & Yandex...`;
+
+      const keyVal = document.getElementById('inputIndexNowKey').value.trim();
+      const targetBing = document.getElementById('targetBing').checked;
+      const targetYandex = document.getElementById('targetYandex').checked;
+      const targetHub = document.getElementById('targetHub').checked;
+
+      const activeEngines = [];
+      if (targetBing) activeEngines.push('Bing');
+      if (targetYandex) activeEngines.push('Yandex');
+      if (targetHub) activeEngines.push('IndexNow Hub');
+
+      logMessage(`Memulai pengiriman batch ${count} URL ke [${activeEngines.join(', ')}] via IndexNow Protocol...`, 'info');
+
+      try {
+        const res = await fetch('/api/indexnow', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            count,
+            key: keyVal,
+            bing: targetBing,
+            yandex: targetYandex,
+            indexnowOrg: targetHub
+          })
+        });
+        const data = await res.json();
+
+        if (data.success && data.report) {
+          const report = data.report;
+          logMessage(`Berhasil mengirim ${report.submittedCount} URL ke jaringan IndexNow! Key: ${report.keyLocation}`, 'success');
+          
+          if (report.results.indexnowOrg) {
+            logMessage(`IndexNow Central Hub: HTTP ${report.results.indexnowOrg.status} (${report.results.indexnowOrg.statusText || 'OK - Diterima'})`, 'success');
+          }
+          if (report.results.bing) {
+            logMessage(`Microsoft Bing: HTTP ${report.results.bing.status} (${report.results.bing.statusText || 'OK - Diterima'})`, 'success');
+          }
+          if (report.results.yandex) {
+            logMessage(`Yandex Search: HTTP ${report.results.yandex.status} (${report.results.yandex.statusText || 'OK - Diterima'})`, 'success');
+          }
+        } else {
+          logMessage(`Gagal mengirim ke IndexNow: ${data.error || 'Unknown error'}`, 'error');
+        }
+      } catch (err) {
+        logMessage(`Error jaringan saat menghubungi API IndexNow: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Kirim 100 URL Sekarang (Bing & Yandex)`;
+      }
+    }
+
+    // Ping sitemaps to Google and Bing
+    async function pingSitemaps() {
+      const btn = document.getElementById('btnPingGoogle');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Mengirim ping ke Google & Bing...`;
+
+      logMessage('Mengirim sinyal ping pembaruan sitemap ke Google dan Bing...', 'info');
+
+      try {
+        const res = await fetch('/api/ping-sitemap');
+        const data = await res.json();
+
+        if (data.success && data.pingResult) {
+          const p = data.pingResult;
+          logMessage(`Google Ping Selesai: HTTP ${p.google.status} (Status: ${p.google.success ? 'Diterima' : 'Gagal'})`, p.google.success ? 'success' : 'warn');
+          logMessage(`Bing Ping Selesai: HTTP ${p.bing.status} (Status: ${p.bing.success ? 'Diterima' : 'Gagal'})`, p.bing.success ? 'success' : 'warn');
+          logMessage(`Sitemap terverifikasi: <a href="${data.sitemapUrl}" target="_blank" class="underline text-amber-300">${data.sitemapUrl}</a>`, 'info');
+        } else {
+          logMessage(`Ping error: ${data.error}`, 'error');
+        }
+      } catch (err) {
+        logMessage(`Error jaringan saat ping: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-bullhorn"></i> Ping Google & Bing dengan Sitemap Sekarang`;
+      }
+    }
+
+    // Init links with current origin
+    document.addEventListener('DOMContentLoaded', () => {
+      logMessage(`Host terdeteksi: <strong>${window.location.host}</strong>`, 'info');
+      refreshStats();
+      loadAdsConfig();
+      loadIndexNowSettings();
+      initDeployHookSettings();
+    });
+
+    async function loadAdsConfig() {
+      try {
+        const res = await fetch('/api/ads');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data) return;
+
+        // Header Ad
+        if (data.header) {
+          document.getElementById('adHeaderEnabled').checked = data.header.enabled !== false;
+          document.getElementById('adHeaderLink').value = data.header.link || '';
+          document.getElementById('adHeaderImage').value = data.header.image || '';
+          document.getElementById('adHeaderHtml').value = data.header.customHtml || '';
+        }
+
+        // Under Player Ad
+        if (data.underPlayer) {
+          document.getElementById('adUnderPlayerEnabled').checked = data.underPlayer.enabled !== false;
+          document.getElementById('adUnderPlayerLink').value = data.underPlayer.link || '';
+          document.getElementById('adUnderPlayerImage').value = data.underPlayer.image || '';
+          document.getElementById('adUnderPlayerHtml').value = data.underPlayer.customHtml || '';
+        }
+
+        // Footer Ad
+        if (data.footer) {
+          document.getElementById('adFooterEnabled').checked = data.footer.enabled !== false;
+          document.getElementById('adFooterLink').value = data.footer.link || '';
+          document.getElementById('adFooterImage').value = data.footer.image || '';
+          document.getElementById('adFooterHtml').value = data.footer.customHtml || '';
+        }
+
+        // Floating Sticky Ad
+        if (data.floating) {
+          document.getElementById('adFloatingEnabled').checked = data.floating.enabled !== false;
+          document.getElementById('adFloatingText').value = data.floating.text || '';
+          document.getElementById('adFloatingLink').value = data.floating.link || '';
+        }
+
+        // Popunder Ad (3 Slot Acak)
+        if (data.popunder) {
+          document.getElementById('adPopunderEnabled').checked = !!data.popunder.enabled;
+          document.getElementById('adPopunderLink1').value = data.popunder.link1 || data.popunder.link || '';
+          document.getElementById('adPopunderLink2').value = data.popunder.link2 || '';
+          document.getElementById('adPopunderLink3').value = data.popunder.link3 || '';
+        }
+
+        // Histats Analytics
+        if (data.histats) {
+          document.getElementById('adHistatsEnabled').checked = data.histats.enabled !== false;
+          document.getElementById('adHistatsCode').value = data.histats.code || '';
+        }
+      } catch (err) {
+        console.warn('Gagal memuat ads config:', err);
+      }
+    }
+
+    async function handleSaveAdsConfig(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveAds');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menyimpan iklan...`;
+
+      const payload = {
+        header: {
+          enabled: document.getElementById('adHeaderEnabled').checked,
+          link: document.getElementById('adHeaderLink').value.trim(),
+          image: document.getElementById('adHeaderImage').value.trim(),
+          customHtml: document.getElementById('adHeaderHtml').value.trim()
+        },
+        underPlayer: {
+          enabled: document.getElementById('adUnderPlayerEnabled').checked,
+          link: document.getElementById('adUnderPlayerLink').value.trim(),
+          image: document.getElementById('adUnderPlayerImage').value.trim(),
+          customHtml: document.getElementById('adUnderPlayerHtml').value.trim()
+        },
+        footer: {
+          enabled: document.getElementById('adFooterEnabled').checked,
+          link: document.getElementById('adFooterLink').value.trim(),
+          image: document.getElementById('adFooterImage').value.trim(),
+          customHtml: document.getElementById('adFooterHtml').value.trim()
+        },
+        floating: {
+          enabled: document.getElementById('adFloatingEnabled').checked,
+          text: document.getElementById('adFloatingText').value.trim(),
+          link: document.getElementById('adFloatingLink').value.trim()
+        },
+        popunder: {
+          enabled: document.getElementById('adPopunderEnabled').checked,
+          link1: document.getElementById('adPopunderLink1').value.trim(),
+          link2: document.getElementById('adPopunderLink2').value.trim(),
+          link3: document.getElementById('adPopunderLink3').value.trim(),
+          mode: 'random'
+        },
+        histats: {
+          enabled: document.getElementById('adHistatsEnabled').checked,
+          code: document.getElementById('adHistatsCode').value.trim()
+        }
+      };
+
+      try {
+        const res = await fetch('/api/ads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+
+        if (res.ok && result.success) {
+          logMessage('Pengaturan iklan berhasil diperbarui dan langsung aktif di seluruh website!', 'success');
+          alert('✅ Pengaturan iklan berhasil disimpan dan langsung AKTIF secara otomatis di seluruh website!');
+        } else {
+          logMessage(`Gagal menyimpan iklan: ${result.error || 'Terjadi kesalahan'}`, 'error');
+        }
+      } catch (err) {
+        logMessage(`Error jaringan saat menyimpan iklan: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Semua Pengaturan Iklan`;
+      }
+    }
+
+    async function refreshStats() {
+      try {
+        const res = await fetch('/api/stats');
+        const data = await res.json();
+        if (data && data.totalVideos) {
+          const formatted = Number(data.totalVideos).toLocaleString();
+          const badge1 = document.getElementById('statVideos');
+          if (badge1) badge1.textContent = formatted;
+          const badge2 = document.getElementById('mgmtTotalVideos');
+          if (badge2) badge2.textContent = `${formatted} Video Terdaftar`;
+        }
+      } catch (e) {}
+    }
+
+    // Add Video
+    async function handleFormAddVideo(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnAddVideo');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menambahkan video...`;
+
+      const payload = {
+        title: document.getElementById('newVideoTitle').value.trim(),
+        image_url: document.getElementById('newVideoImage').value.trim(),
+        iframe_url: document.getElementById('newVideoIframe').value.trim(),
+        video_url: document.getElementById('newVideoSource').value.trim(),
+        submit_indexnow: document.getElementById('chkAutoIndex').checked
+      };
+
+      try {
+        const res = await fetch('/api/videos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          logMessage(`Video baru berhasil ditambahkan: <strong>#${data.video.id} - ${data.video.title}</strong>`, 'success');
+          if (data.indexNow) {
+            logMessage(`IndexNow Push otomatis: ${JSON.stringify(data.indexNow.results || data.indexNow)}`, 'info');
+          }
+          document.getElementById('addVideoForm').reset();
+          refreshStats();
+          alert(`Video #${data.video.id} berhasil ditambahkan ke database!\n\nUntuk mempublikasikan ke Vercel Live:\nJalankan di terminal: vercel.cmd --prod --yes`);
+        } else {
+          logMessage(`Gagal menambahkan video: ${data.error || 'Terjadi kesalahan'}`, 'error');
+        }
+      } catch (err) {
+        logMessage(`Error jaringan saat menambahkan video: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-check"></i> Tambahkan Video ke Database`;
+      }
+    }
+
+    // Search video for deletion
+    let searchDeleteTimeout = null;
+    function debounceSearchDelete(query) {
+      clearTimeout(searchDeleteTimeout);
+      const container = document.getElementById('deleteSearchResults');
+      if (!query || !query.trim()) {
+        container.innerHTML = `<div class="text-zinc-500 text-center py-6 text-[11px]">Ketik nama judul atau ID di atas untuk mencari video yang ingin dihapus.</div>`;
+        return;
+      }
+
+      container.innerHTML = `<div class="text-zinc-400 text-center py-4 text-xs"><i class="fa-solid fa-spinner animate-spin"></i> Mencari video...</div>`;
+
+      searchDeleteTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/videos?q=${encodeURIComponent(query.trim())}&limit=6`);
+          const data = await res.json();
+
+          if (!data.items || data.items.length === 0) {
+            container.innerHTML = `<div class="text-zinc-500 text-center py-6 text-[11px]">Tidak ada video yang cocok dengan "${query}".</div>`;
+            return;
+          }
+
+          container.innerHTML = data.items.map(v => `
+            <div class="p-2.5 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5 overflow-hidden">
+                <img src="${v.image_url || '/placeholder.svg'}" class="w-12 h-8 rounded object-cover shrink-0 bg-zinc-800" onerror="this.src='/placeholder.svg'" />
+                <div class="overflow-hidden">
+                  <div class="text-zinc-200 font-semibold truncate leading-tight">${v.title}</div>
+                  <div class="text-[10px] text-zinc-500 font-mono">ID: #${v.id}</div>
+                </div>
+              </div>
+              <button 
+                onclick="handleDeleteVideo(${v.id}, '${v.title.replace(/'/g, "\\'")}')" 
+                class="px-2.5 py-1.5 rounded bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white font-semibold text-[11px] shrink-0 transition flex items-center gap-1"
+              >
+                <i class="fa-solid fa-trash-can text-[10px]"></i> Hapus
+              </button>
+            </div>
+          `).join('');
+        } catch (err) {
+          container.innerHTML = `<div class="text-rose-400 text-center py-4 text-xs">Error mencari video: ${err.message}</div>`;
+        }
+      }, 300);
+    }
+
+    // Delete Video
+    async function handleDeleteVideo(id, title) {
+      if (!confirm(`Yakin ingin menghapus video ini?\n\nID: #${id}\nJudul: ${title}`)) {
+        return;
+      }
+
+      logMessage(`Menghapus video #${id} (${title})...`, 'warn');
+
+      try {
+        const res = await fetch(`/api/videos/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          logMessage(`Video #${id} berhasil dihapus dari database!`, 'success');
+          refreshStats();
+          const query = document.getElementById('searchDeleteInput').value;
+          debounceSearchDelete(query);
+          checkAndTriggerAutoDeploy(`Hapus Video #${id}`);
+        } else {
+          logMessage(`Gagal menghapus video: ${data.error || 'Terjadi kesalahan'}`, 'error');
+        }
+      } catch (err) {
+        logMessage(`Error jaringan saat menghapus video: ${err.message}`, 'error');
+      }
+    }
+
+    // Bulk CSV import
+    async function handleBulkCsvImport() {
+      const textarea = document.getElementById('csvBulkText');
+      const csv = textarea.value.trim();
+      if (!csv) {
+        alert('Silakan tempel baris data CSV terlebih dahulu.');
+        return;
+      }
+
+      logMessage('Memproses impor CSV massal...', 'info');
+
+      try {
+        const res = await fetch('/api/videos/import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ csv })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          logMessage(`Berhasil mengimpor ${data.importedCount} video baru dari CSV!`, 'success');
+          textarea.value = '';
+          refreshStats();
+          checkAndTriggerAutoDeploy(`Impor ${data.importedCount} video baru`);
+        } else {
+          logMessage(`Gagal mengimpor CSV: ${data.error || 'Terjadi kesalahan'}`, 'error');
+        }
+      } catch (err) {
+        logMessage(`Error jaringan saat impor CSV: ${err.message}`, 'error');
+      }
+    }
+
+    // Vercel 1-Click Deploy Hook Functions
+    function initDeployHookSettings() {
+      const savedHook = localStorage.getItem('vercel_deploy_hook_url') || '';
+      const autoDeploy = localStorage.getItem('vercel_auto_deploy_enabled') === 'true';
+
+      const input = document.getElementById('vercelDeployHookInput');
+      const checkbox = document.getElementById('autoDeployOnActionCheckbox');
+
+      if (input && savedHook) input.value = savedHook;
+      if (checkbox) checkbox.checked = autoDeploy;
+    }
+
+    function saveDeployHookUrl() {
+      const input = document.getElementById('vercelDeployHookInput');
+      const checkbox = document.getElementById('autoDeployOnActionCheckbox');
+      const url = (input ? input.value : '').trim();
+
+      if (url && !url.startsWith('http')) {
+        alert('Format URL tidak valid. Pastikan diawali dengan https://');
+        return;
+      }
+
+      localStorage.setItem('vercel_deploy_hook_url', url);
+      if (checkbox) {
+        localStorage.setItem('vercel_auto_deploy_enabled', checkbox.checked ? 'true' : 'false');
+      }
+
+      logMessage('Pengaturan Vercel Deploy Hook berhasil disimpan!', 'success');
+    }
+
+    async function handleExecuteDeploy() {
+      const hookUrl = (localStorage.getItem('vercel_deploy_hook_url') || '').trim();
+      const input = document.getElementById('vercelDeployHookInput');
+      const activeUrl = hookUrl || (input ? input.value.trim() : '');
+
+      if (!activeUrl) {
+        scrollToDeploySection();
+        alert('⚠️ URL Vercel Deploy Hook belum diatur!\n\nSilakan buat Deploy Hook di dashboard Vercel (Settings > Git > Deploy Hooks) lalu tempelkan URL-nya pada kotak yang tersedia.');
+        if (input) input.focus();
+        return;
+      }
+
+      const btns = [document.getElementById('headerDeployBtn'), document.getElementById('mainDeployBtn')];
+      btns.forEach(b => {
+        if (b) {
+          b.disabled = true;
+          b.classList.add('opacity-50', 'cursor-not-allowed');
+          b.dataset.origHtml = b.innerHTML;
+          b.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mendeploy...';
+        }
+      });
+
+      logMessage('🚀 Mengirim sinyal deploy ke Vercel di cloud...', 'info');
+
+      try {
+        const res = await fetch('/api/admin/deploy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hookUrl: activeUrl })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          logMessage('✅ Sinyal deploy berhasil diterima Vercel! Build baru sedang diproses (~20-30 detik).', 'success');
+          alert('🚀 SUKSES MEMICU DEPLOY!\n\nVercel telah menerima sinyal build di cloud.\nDalam 20-30 detik, website live akan terupdate secara otomatis!');
+        } else {
+          logMessage(`❌ Gagal memicu deploy Vercel: ${data.error || 'Terjadi kesalahan'}`, 'error');
+          alert(`Gagal memicu deploy:\n${data.error || 'Pastikan URL Deploy Hook valid dan project Vercel aktif.'}`);
+        }
+      } catch (err) {
+        logMessage(`❌ Error jaringan saat menghubungi Vercel: ${err.message}`, 'error');
+        alert(`Error jaringan saat menghubungi Vercel: ${err.message}`);
+      } finally {
+        btns.forEach(b => {
+          if (b && b.dataset.origHtml) {
+            b.disabled = false;
+            b.classList.remove('opacity-50', 'cursor-not-allowed');
+            b.innerHTML = b.dataset.origHtml;
+          }
+        });
+      }
+    }
+
+    function scrollToDeploySection() {
+      const sec = document.getElementById('deployHookSection');
+      if (sec) {
+        sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        sec.classList.add('ring-2', 'ring-amber-500');
+        setTimeout(() => sec.classList.remove('ring-2', 'ring-amber-500'), 2500);
+      }
+    }
+
+    function checkAndTriggerAutoDeploy(actionName) {
+      const isAuto = localStorage.getItem('vercel_auto_deploy_enabled') === 'true';
+      const hookUrl = (localStorage.getItem('vercel_deploy_hook_url') || '').trim();
+
+      if (isAuto && hookUrl) {
+        logMessage(`[Auto-Deploy] Memicu deploy otomatis setelah ${actionName}...`, 'info');
+        handleExecuteDeploy();
+      } else {
+        scrollToDeploySection();
+      }
+    }
+
+    async function handleAdminLogout() {
+      if (!confirm('Apakah Anda ingin keluar (logout) dari panel admin?')) return;
+      try {
+        await fetch('/api/admin/logout', { method: 'POST' });
+      } catch (e) {}
+      window.location.href = '/wp-admin';
+    }
+
+    function deployReminder() {
+      scrollToDeploySection();
+    }
+  </script>
+</body>
+</html>
