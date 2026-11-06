@@ -1,0 +1,49 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = "npm run build"
+
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["data/**", "public/**"]
+
+# Dynamic API and SSR Routes handled by Netlify Function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[redirects]]
+  from = "/sitemap*"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[redirects]]
+  from = "/watch/*"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[redirects]]
+  from = "/watch"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[redirects]]
+  from = "/indexing*"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[redirects]]
+  from = "/wp-admin*"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[redirects]]
+  from = "/*.txt"
+  to = "/.netlify/functions/server"
+  status = 200

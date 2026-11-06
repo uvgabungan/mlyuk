@@ -33,7 +33,9 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+const PUBLIC_DIR = fs.existsSync(path.join(process.cwd(), 'public'))
+  ? path.join(process.cwd(), 'public')
+  : path.join(__dirname, '..', 'public');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -621,7 +623,9 @@ export default async function handler(req, res) {
     }
 
     // Logged in: Serve admin control center (indexing-admin.html)
-    const adminPath = path.join(__dirname, '..', 'data', 'indexing-admin.html');
+    const adminPath = fs.existsSync(path.join(process.cwd(), 'data', 'indexing-admin.html'))
+      ? path.join(process.cwd(), 'data', 'indexing-admin.html')
+      : path.join(__dirname, '..', 'data', 'indexing-admin.html');
     if (fs.existsSync(adminPath)) {
       res.writeHead(200, {
         'Content-Type': 'text/html; charset=utf-8',

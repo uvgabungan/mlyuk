@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "build": "echo Netlify build ready"
   },
   "engines": {
     "node": ">=20.x"
@@ -21,5 +22,8 @@
     "yandex"
   ],
   "author": "Ghufron",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "serverless-http": "^3.2.0"
+  }
 }
